@@ -581,6 +581,176 @@ def change_speed():
     
     tk.Button(speed_window, text="Apply", command=apply_speed).pack(pady=10)
 
+def show_help():
+    """Display help window with all instruction syntax"""
+    help_window = tk.Toplevel(root)
+    help_window.title("Help - Instruction Syntax")
+    help_window.geometry("700x600")
+    
+    # Create a text widget with scrollbar
+    help_frame = tk.Frame(help_window)
+    help_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    
+    help_text = tk.Text(help_frame, wrap=tk.WORD, font=("Courier", 10), height=30, width=80)
+    scrollbar = tk.Scrollbar(help_frame, command=help_text.yview)
+    help_text.config(yscrollcommand=scrollbar.set)
+    
+    help_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    
+    # Help content
+    help_content = """
+================================================================================
+                    INSTRUCTION SET SIMULATOR - HELP GUIDE
+================================================================================
+
+SUPPORTED INSTRUCTIONS AND SYNTAX:
+
+1. LOAD (Load Immediate Value)
+   Syntax: LOAD <register>, <value>
+   Example: LOAD R0, 10
+   Description: Loads an immediate value into a register
+   Registers: R0-R7
+   Value: 0-255 (8-bit)
+
+2. STORE (Store Register to Memory)
+   Syntax: STORE <register>, <address>
+   Example: STORE R0, 10
+   Description: Stores the value from a register to memory
+   Registers: R0-R7
+   Address: 0-63 (Memory location as decimal)
+   Format: Can also use RxC notation (Row x Column, e.g., 2x5)
+
+3. MOV (Move Register to Register)
+   Syntax: MOV <destination>, <source>
+   Example: MOV R1, R0
+   Description: Copies value from source register to destination
+   Registers: R0-R7 for both operands
+
+4. ADD (Addition)
+   Syntax: ADD <register>, <register>
+          ADD <destination>, <source1>, <source2>
+   Example: ADD R0, R1  or  ADD R2, R0, R1
+   Description: Adds two register values
+   2-operand form: Adds R1 to R0, stores in R0
+   3-operand form: Adds R0+R1, stores in R2
+
+5. SUB (Subtraction)
+   Syntax: SUB <register>, <register>
+          SUB <destination>, <source1>, <source2>
+   Example: SUB R0, R1  or  SUB R2, R0, R1
+   Description: Subtracts register values
+   2-operand form: R0 = R0 - R1
+   3-operand form: R2 = R0 - R1
+
+6. MUL (Multiplication)
+   Syntax: MUL <register>, <register>
+          MUL <destination>, <source1>, <source2>
+   Example: MUL R0, R1  or  MUL R2, R0, R1
+   Description: Multiplies register values
+   2-operand form: R0 = R0 * R1
+   3-operand form: R2 = R0 * R1
+
+7. INC (Increment)
+   Syntax: INC <register>
+   Example: INC R0
+   Description: Increments register by 1
+   Registers: R0-R7
+
+8. DEC (Decrement)
+   Syntax: DEC <register>
+   Example: DEC R0
+   Description: Decrements register by 1
+   Registers: R0-R7
+
+9. CMP (Compare)
+   Syntax: CMP <register>, <register>
+   Example: CMP R0, R1
+   Description: Compares two registers and sets FLAGS
+   Sets Z flag if equal, N flag if negative, etc.
+
+10. JMP (Jump Unconditional)
+    Syntax: JMP <line_number>
+    Example: JMP 5
+    Description: Unconditionally jumps to specified line
+    Line: 0-based line number
+
+11. JZ (Jump if Zero)
+    Syntax: JZ <line_number>
+    Example: JZ 10
+    Description: Jumps to line if Z flag is set (result was zero)
+    Line: 0-based line number
+
+12. JNZ (Jump if Not Zero)
+    Syntax: JNZ <line_number>
+    Example: JNZ 8
+    Description: Jumps to line if Z flag is clear (result was not zero)
+    Line: 0-based line number
+
+13. JC (Jump if Carry)
+    Syntax: JC <line_number>
+    Example: JC 12
+    Description: Jumps to line if C flag is set (carry occurred)
+    Line: 0-based line number
+
+14. JN (Jump if Negative)
+    Syntax: JN <line_number>
+    Example: JN 6
+    Description: Jumps to line if N flag is set (result was negative)
+    Line: 0-based line number
+
+15. NOP (No Operation)
+    Syntax: NOP
+    Example: NOP
+    Description: Does nothing, just increments PC
+
+================================================================================
+COMMENTS:
+   Use semicolon (;) or hash (#) for comments
+   Example: LOAD R0, 10  ; Load 10 into R0
+           LOAD R1, 20  # Load 20 into R1
+
+FLAGS REGISTER:
+   Z (Zero): Set if result equals zero
+   N (Negative): Set if bit 7 is set (result > 127)
+   C (Carry): Set if overflow occurred
+   V (Overflow): Set if result wrapped
+
+REGISTERS:
+   R0-R7: 8 General Purpose Registers (8-bit each)
+
+MEMORY:
+   64 bytes total (0-63)
+   Can be addressed as decimal (0-63) or matrix (RxC format)
+   Memory display: 8x8 Matrix with headers
+
+SPECIAL REGISTERS:
+   PC (Program Counter): Current instruction line
+   IR (Instruction Register): Current instruction
+   MAR (Memory Address Register): Current memory address
+   MDR (Memory Data Register): Current memory data
+   FLAGS: Condition flags (Z, N, C, V)
+
+BUTTONS:
+   Verify: Check syntax of all instructions
+   Step All: Execute all instructions once
+   Next: Execute instructions with animation
+   Reset: Clear all registers and memory
+   Undo: Revert to previous state
+   Redo: Restore next state
+   Load: Load a program from file
+   Save: Save current program to file
+
+================================================================================
+    """
+    
+    help_text.insert("1.0", help_content)
+    help_text.config(state=tk.DISABLED)  # Make read-only
+    
+    # Close button
+    close_btn = tk.Button(help_window, text="Close", command=help_window.destroy, width=15)
+    close_btn.pack(pady=10)
+
 # === GUI Layout ===
 root = tk.Tk()
 root.title("Enhanced Instruction Set Simulator")
@@ -614,6 +784,10 @@ view_menu = tk.Menu(menubar, tearoff=0)
 menubar.add_cascade(label="View", menu=view_menu)
 view_menu.add_command(label="Toggle Dark Mode", command=toggle_dark_mode)
 view_menu.add_command(label="Change Speed", command=change_speed)
+
+help_menu = tk.Menu(menubar, tearoff=0)
+menubar.add_cascade(label="Help", menu=help_menu)
+help_menu.add_command(label="Show Help", command=show_help)
 
 # Top row: Instruction Input and Registers
 top_frame = tk.Frame(root)
@@ -751,32 +925,28 @@ root.bind("<Control-s>", lambda e: save_program())
 root.bind("<Control-o>", lambda e: load_program())
 
 # Load example program
-example_program = """; Example: Matrix Memory Addressing Demo
-; Memory uses RxC format (Row x Column)
-; Example: 2x3 = Row 2, Column 3
+example_program = """
 
-; Store values in different memory locations
-LOAD R0, 10        ; Load 10 into R0
-STORE R0, 10     ; Store in Row 0, Col 0
-LOAD R1, 20        ; Load 20 into R1
-STORE R1, 11     ; Store in Row 1, Col 1
-LOAD R2, 30        ; Load 30 into R2
-STORE R2, 22      ; Store in Row 2, Col 2
+LOAD R0,10       
+STORE R0,10    
+LOAD R1,20       
+STORE R1,11    
+LOAD R2,30      
+STORE R2,22
 
-; Load from memory and add
-LOAD R3, 10       ; Load from Row 0, Col 0
-LOAD R4, 11      ; Load from Row 1, Col 1
-ADD R5, R3, R4     ; R5 = R3 + R4
-STORE R5, 37     ; Store result in Row 3, Col 7
+LOAD R3,10       
+LOAD R4,11      
+ADD R5,R3,R4    
+STORE R5,37   
 
-; Simple loop example
-LOAD R6, 0         ; Counter = 0
-LOAD R7, 5         ; Max = 5
-; Loop (line 19)
-INC R6             ; Increment counter
-CMP R6, R7         ; Compare with max
-JNZ 19             ; Jump back if not equal
-STORE R6, 7x7      ; Store final count at Row 7, Col 7
+
+LOAD R6,0       
+LOAD R7,5         
+
+INC R6           
+CMP R6,R7       
+JNZ 19             
+STORE R6,10  
 """
 
 instruction_entry.insert("1.0", example_program)
